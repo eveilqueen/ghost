@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Ghost ✦ Evil — Salon</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============== TOKENS ============== */
+:root{
+  --noir: #160a10;
+  --noir-panel: #221019;
+  --noir-panel-2: #2b1420;
+  --rose-vif: #d23a5e;
+  --rose-pale: #f0c4cf;
+  --or: #c9a063;
+  --or-pale: #e8d2a6;
+  --texte: #f3e6e9;
+  --texte-douce: #c9b3ba;
+  --ghost-bulle: #2a1b30;
+  --ghost-bord: #8a6bb0;
+  --evil-bulle: #3a1420;
+  --evil-bord: #d23a5e;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{
+  font-family:'Inter', sans-serif;
+  background: radial-gradient(ellipse at top, #271019 0%, var(--noir) 60%);
+  color:var(--texte);
+  min-height:100vh;
+  overflow-x:hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+}
+
+h1,h2,h3,.display{font-family:'Cormorant Garamond', serif;}
+
+/* ============== PETALES AMBIANTS ============== */
+#petales{position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden;}
+.petale{
+  position:absolute; top:-5%;
+  width:14px; height:14px;
+  background: radial-gradient(circle at 30% 30%, var(--rose-pale), var(--rose-vif));
+  border-radius: 0 70% 0 70%;
+  opacity:0.55;
+  animation: tomber linear infinite;
+}
+@keyframes tomber{
+  to{ transform: translateY(110vh) rotate(360deg); }
+}
+
+/* ============== SVG VIGNE DECORATIVE ============== */
+.vigne{position:absolute; pointer-events:none; opacity:0.9; z-index:0;}
+.vigne.gauche{top:0; left:0; height:100%; width:60px;}
+.vigne.droite{top:0; right:0; height:100%; width:60px; transform:scaleX(-1);}
+
+/* ============== ECRAN LOGIN ============== */
+#ecran-login{
+  position:relative; z-index:2;
+  min-height:100vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding: 32px 20px;
+  gap: 28px;
+}
+.titre-salon{
+  text-align:center;
+}
+.titre-salon h1{
+  font-size: 2.6rem;
+  font-weight:600;
+  letter-spacing: 0.5px;
+  background: linear-gradient(120deg, var(--rose-pale), var(--or-pale), var(--rose-vif));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.titre-salon p{
+  color:var(--texte-douce);
+  font-size:0.85rem;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  margin-top:4px;
+}
+
+.cartes-login{
+  display:flex; gap:18px; flex-wrap:wrap; justify-content:center; width:100%; max-width:480px;
+}
+.carte-perso{
+  flex:1; min-width:150px;
+  background: linear-gradient(160deg, var(--noir-panel), var(--noir-panel-2));
+  border:1px solid rgba(201,160,99,0.25);
+  border-radius:18px;
+  padding:22px 16px;
+  text-align:center;
+  cursor:pointer;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  position:relative;
+  overflow:hidden;
+}
+.carte-perso::before{
+  content:"";
+  position:absolute; inset:0;
+  background: radial-gradient(circle at 50% 0%, rgba(210,58,94,0.15), transparent 60%);
+  opacity:0; transition:opacity 0.3s;
+}
+.carte-perso:hover{ transform: translateY(-4px); border-color: rgba(201,160,99,0.6); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+.carte-perso:hover::before{ opacity:1; }
+.carte-perso.actif{ border-color: var(--rose-vif); box-shadow: 0 0 0 1px var(--rose-vif), 0 10px 30px rgba(210,58,94,0.25); }
+
+.icone-fleur{ width:54px; height:54px; margin:0 auto 10px; display:block; }
+.carte-perso h3{ font-size:1.4rem; font-weight:500; color:var(--texte); }
+.carte-perso span{ font-size:0.72rem; color:var(--texte-douce); letter-spacing:1px; text-transform:uppercase; }
+
+.zone-mdp{ width:100%; max-width:480px; display:flex; flex-direction:column; gap:14px; }
+.zone-mdp input{
+  width:100%;
+  padding:14px 16px;
+  border-radius:14px;
+  border:1px solid rgba(201,160,99,0.3);
+  background: rgba(255,255,255,0.04);
+  color:var(--texte);
+  font-size:1rem;
+  font-family:'Inter', sans-serif;
+  outline:none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.zone-mdp input:focus{ border-color: var(--rose-vif); background: rgba(255,255,255,0.07); }
+.zone-mdp input::placeholder{ color: var(--texte-douce); }
+
+.btn-entrer{
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  background: linear-gradient(120deg, var(--rose-vif), #a3274a);
+  color:#fff;
+  font-size:1rem;
+  font-weight:600;
+  letter-spacing:0.5px;
+  cursor:pointer;
+  transition: filter 0.2s, transform 0.1s;
+}
+.btn-entrer:hover{ filter:brightness(1.1); }
+.btn-entrer:active{ transform: scale(0.98); }
+
+.msg-erreur{
+  color: var(--rose-vif);
+  font-size:0.85rem;
+  text-align:center;
+  min-height:18px;
+}
+
+.statut-connexion{
+  font-size:0.7rem;
+  color:var(--texte-douce);
+  letter-spacing:1px;
+  text-transform:uppercase;
+  display:flex; align-items:center; gap:6px;
+}
+.point-statut{ width:7px; height:7px; border-radius:50%; background:#777; }
+.point-statut.ok{ background:#5ed99b; box-shadow:0 0 8px #5ed99b; }
+.point-statut.ko{ background:var(--rose-vif); }
+
+/* ============== ECRAN CHAT ============== */
+#ecran-chat{
+  display:none;
+  position:relative; z-index:2;
+  height:100vh;
+  flex-direction:column;
+  max-width:680px;
+  margin:0 auto;
+  padding: 14px 14px 0 14px;
+}
+.entete-chat{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 16px;
+  background: linear-gradient(160deg, var(--noir-panel), var(--noir-panel-2));
+  border:1px solid rgba(201,160,99,0.25);
+  border-radius:18px 18px 0 0;
+  position:relative;
+}
+.entete-noms{ display:flex; align-items:center; gap:10px; }
+.entete-noms .icone-fleur{ width:30px; height:30px; margin:0; }
+.entete-noms h2{ font-size:1.3rem; font-weight:500; letter-spacing:0.5px; }
+.entete-noms small{ display:block; font-size:0.65rem; color:var(--texte-douce); letter-spacing:1px; }
+.lien-coeur{ font-size:1.1rem; color:var(--rose-vif); margin:0 6px; }
+.btn-quitter{
+  background:none; border:1px solid rgba(201,160,99,0.3); color:var(--texte-douce);
+  font-size:0.7rem; letter-spacing:1px; text-transform:uppercase;
+  padding:7px 12px; border-radius:10px; cursor:pointer;
+}
+.btn-quitter:hover{ border-color: var(--rose-vif); color:var(--rose-vif); }
+
+.btn-musique{
+  width:34px; height:34px;
+  border-radius:50%;
+  border:1px solid rgba(201,160,99,0.3);
+  background:none;
+  color:var(--or-pale);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+.btn-musique:hover{ border-color: var(--rose-vif); color: var(--rose-vif); }
+.btn-musique.actif{ background: rgba(210,58,94,0.18); border-color: var(--rose-vif); color: var(--rose-vif); }
+
+.zone-messages{
+  flex:1;
+  overflow-y:auto;
+  background: linear-gradient(180deg, rgba(34,16,25,0.7), rgba(22,10,16,0.85));
+  border-left:1px solid rgba(201,160,99,0.25);
+  border-right:1px solid rgba(201,160,99,0.25);
+  padding: 18px 14px;
+  display:flex; flex-direction:column; gap:10px;
+  scroll-behavior:smooth;
+}
+.zone-messages::-webkit-scrollbar{ width:5px; }
+.zone-messages::-webkit-scrollbar-thumb{ background: rgba(201,160,99,0.4); border-radius:10px; }
+
+.bulle{
+  max-width:75%;
+  padding:10px 14px;
+  border-radius:16px;
+  font-size:0.95rem;
+  line-height:1.4;
+  position:relative;
+  animation: apparaitre 0.25s ease;
+  word-wrap:break-word;
+}
+@keyframes apparaitre{ from{ opacity:0; transform: translateY(6px); } to{ opacity:1; transform:none; } }
+
+.bulle.moi{
+  align-self:flex-end;
+  background: linear-gradient(135deg, var(--evil-bulle), #4a1828);
+  border:1px solid var(--evil-bord);
+  border-bottom-right-radius:4px;
+}
+.bulle.toi{
+  align-self:flex-start;
+  background: linear-gradient(135deg, var(--ghost-bulle), #20142c);
+  border:1px solid var(--ghost-bord);
+  border-bottom-left-radius:4px;
+}
+.bulle .heure{
+  display:block; margin-top:4px;
+  font-size:0.65rem; color:var(--texte-douce); text-align:right;
+}
+
+.zone-saisie{
+  display:flex; align-items:center; gap:10px;
+  padding:12px 14px;
+  background: linear-gradient(160deg, var(--noir-panel), var(--noir-panel-2));
+  border:1px solid rgba(201,160,99,0.25);
+  border-radius:0 0 18px 18px;
+  margin-bottom: env(safe-area-inset-bottom, 0px);
+}
+#champ-message{
+  flex:1;
+  padding:12px 16px;
+  border-radius:20px;
+  border:1px solid rgba(201,160,99,0.3);
+  background: rgba(255,255,255,0.05);
+  color:var(--texte);
+  font-size:0.95rem;
+  font-family:'Inter', sans-serif;
+  outline:none;
+  resize:none;
+  max-height:100px;
+}
+#champ-message:focus{ border-color: var(--rose-vif); }
+#btn-envoyer{
+  width:42px; height:42px; flex-shrink:0;
+  border:none; border-radius:50%;
+  background: linear-gradient(135deg, var(--rose-vif), #a3274a);
+  color:#fff; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition: transform 0.1s;
+}
+#btn-envoyer:active{ transform: scale(0.92); }
+
+.message-vide{
+  text-align:center; color:var(--texte-douce); font-size:0.85rem;
+  margin:auto; opacity:0.7; font-style:italic;
+}
+
+@media (max-width:480px){
+  .vigne{ width:32px; }
+  .titre-salon h1{ font-size:2.1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Petales en fond -->
+<div id="petales"></div>
+
+<!-- Vignes décoratives SVG (roses dessinées) -->
+<svg class="vigne gauche" viewBox="0 0 60 800" preserveAspectRatio="none">
+  <path d="M10 0 Q40 80 10 160 Q-10 240 10 320 Q40 400 10 480 Q-10 560 10 640 Q40 720 10 800" fill="none" stroke="#5a3a44" stroke-width="2" opacity="0.6"/>
+  <g fill="#d23a5e" opacity="0.85">
+    <circle cx="10" cy="60" r="8"/><circle cx="16" cy="55" r="6"/><circle cx="5" cy="53" r="6"/>
+    <circle cx="10" cy="300" r="7"/><circle cx="15" cy="296" r="5"/><circle cx="6" cy="295" r="5"/>
+    <circle cx="10" cy="560" r="8"/><circle cx="16" cy="556" r="6"/><circle cx="5" cy="554" r="6"/>
+  </g>
+  <g fill="#3f8f5e" opacity="0.7">
+    <ellipse cx="22" cy="180" rx="9" ry="4" transform="rotate(30 22 180)"/>
+    <ellipse cx="0" cy="420" rx="9" ry="4" transform="rotate(-30 0 420)"/>
+    <ellipse cx="22" cy="680" rx="9" ry="4" transform="rotate(30 22 680)"/>
+  </g>
+</svg>
+<svg class="vigne droite" viewBox="0 0 60 800" preserveAspectRatio="none">
+  <path d="M10 0 Q40 80 10 160 Q-10 240 10 320 Q40 400 10 480 Q-10 560 10 640 Q40 720 10 800" fill="none" stroke="#5a3a44" stroke-width="2" opacity="0.6"/>
+  <g fill="#c9a063" opacity="0.85">
+    <circle cx="10" cy="120" r="7"/><circle cx="16" cy="116" r="5"/><circle cx="5" cy="114" r="5"/>
+    <circle cx="10" cy="400" r="8"/><circle cx="16" cy="396" r="6"/><circle cx="5" cy="394" r="6"/>
+    <circle cx="10" cy="640" r="7"/><circle cx="16" cy="636" r="5"/><circle cx="5" cy="634" r="5"/>
+  </g>
+  <g fill="#3f8f5e" opacity="0.7">
+    <ellipse cx="22" cy="260" rx="9" ry="4" transform="rotate(30 22 260)"/>
+    <ellipse cx="0" cy="500" rx="9" ry="4" transform="rotate(-30 0 500)"/>
+  </g>
+</svg>
+
+<!-- ============== ECRAN LOGIN ============== -->
+<div id="ecran-login">
+  <div class="titre-salon">
+    <h1>Ghost ✦ Evil</h1>
+    <p>Salon privé du rancard</p>
+  </div>
+
+  <div class="cartes-login">
+    <div class="carte-perso" data-pseudo="ghost" id="carte-ghost">
+      <svg class="icone-fleur" viewBox="0 0 64 64">
+        <path d="M32 10c4 0 7 3 7 7s-3 8-7 12c-4-4-7-8-7-12s3-7 7-7z" fill="#8a6bb0"/>
+        <path d="M32 29c5 4 14 4 16 11-7 2-15-1-16-7-1 6-9 9-16 7 2-7 11-7 16-11z" fill="#6b4a8f" opacity="0.8"/>
+        <rect x="30.5" y="29" width="3" height="22" rx="1.5" fill="#3f8f5e"/>
+      </svg>
+      <h3>Ghost</h3>
+      <span>Lui</span>
+    </div>
+    <div class="carte-perso" data-pseudo="evil" id="carte-evil">
+      <svg class="icone-fleur" viewBox="0 0 64 64">
+        <g fill="#d23a5e">
+          <circle cx="32" cy="22" r="9"/>
+          <circle cx="22" cy="28" r="7"/>
+          <circle cx="42" cy="28" r="7"/>
+          <circle cx="32" cy="33" r="7"/>
+        </g>
+        <rect x="30.5" y="36" width="3" height="20" rx="1.5" fill="#3f8f5e"/>
+        <ellipse cx="40" cy="44" rx="7" ry="3" fill="#3f8f5e" transform="rotate(30 40 44)"/>
+      </svg>
+      <h3>Evil</h3>
+      <span>Elle</span>
+    </div>
+  </div>
+
+  <div class="zone-mdp">
+    <input type="password" id="champ-mdp" placeholder="Mot de passe" autocomplete="off">
+    <button class="btn-entrer" id="btn-entrer">Entrer dans le salon</button>
+    <div class="msg-erreur" id="msg-erreur"></div>
+  </div>
+
+  <div class="statut-connexion">
+    <span class="point-statut" id="point-statut"></span>
+    <span id="texte-statut">connexion au salon…</span>
+  </div>
+</div>
+
+<!-- ============== ECRAN CHAT ============== -->
+<div id="ecran-chat">
+  <div class="entete-chat">
+    <div class="entete-noms">
+      <svg class="icone-fleur" viewBox="0 0 64 64"><circle cx="32" cy="32" r="20" fill="#d23a5e" opacity="0.85"/></svg>
+      <div>
+        <h2 id="entete-titre">Ghost <span class="lien-coeur">♥</span> Evil</h2>
+        <small id="entete-sousTitre">Ghost Sabine</small>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="btn-musique" id="btn-musique" aria-label="Musique d'ambiance">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" id="icone-musique">
+          <path d="M9 18V5l12-2v13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="1.6"/>
+        </svg>
+      </button>
+      <button class="btn-quitter" id="btn-quitter">Quitter</button>
+    </div>
+  </div>
+
+  <div class="zone-messages" id="zone-messages">
+    <div class="message-vide" id="message-vide">Le salon est silencieux pour le moment… écris le premier mot.</div>
+  </div>
+
+  <div class="zone-saisie">
+    <textarea id="champ-message" rows="1" placeholder="Écrit à…"></textarea>
+    <button id="btn-envoyer" aria-label="Envoyer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 12l18-9-9 18-2-7-7-2z" fill="#fff"/></svg>
+    </button>
+  </div>
+</div>
+
+<script type="module">
+/* ===================================================================
+   CONFIGURATION FIREBASE
+   -------------------------------------------------------------------
+   Remplace les valeurs ci-dessous par celles de TON projet Firebase
+   (gratuit). Étapes en bas du fichier README fourni à côté.
+   =================================================================== */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getDatabase, ref, push, onValue, query, limitToLast, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDOJv_Cj3YPJLXxgQ1s1fCqB6N61VIQHzU",
+  authDomain: "ghost-97a4f.firebaseapp.com",
+  databaseURL: "https://ghost-97a4f-default-rtdb.firebaseio.com",
+  projectId: "ghost-97a4f",
+};
+
+let db;
+let firebaseOK = false;
+try {
+  const app = initializeApp(firebaseConfig);
+  db = getDatabase(app);
+  firebaseOK = true;
+} catch (e) {
+  console.error("Firebase non configuré :", e);
+}
+
+/* ===================================================================
+   COMPTES (en dur — usage privé entre vous deux uniquement)
+   =================================================================== */
+const COMPTES = {
+  evil:  { motdepasse: "@sabine.net", nomAffiche: "Evil" },
+  ghost: { motdepasse: "@ghost.net",  nomAffiche: "Ghost" },
+};
+
+let pseudoChoisi = null;
+let utilisateurActuel = null; // 'ghost' ou 'evil' une fois connecté
+
+/* ---------- Sélection de la carte pseudo ---------- */
+document.getElementById("carte-ghost").addEventListener("click", () => choisirPseudo("ghost"));
+document.getElementById("carte-evil").addEventListener("click", () => choisirPseudo("evil"));
+
+function choisirPseudo(pseudo){
+  pseudoChoisi = pseudo;
+  document.getElementById("carte-ghost").classList.toggle("actif", pseudo === "ghost");
+  document.getElementById("carte-evil").classList.toggle("actif", pseudo === "evil");
+  document.getElementById("msg-erreur").textContent = "";
+  document.getElementById("champ-mdp").focus();
+}
+
+/* ---------- Statut Firebase ---------- */
+const pointStatut = document.getElementById("point-statut");
+const texteStatut = document.getElementById("texte-statut");
+if (firebaseOK) {
+  pointStatut.classList.add("ok");
+  texteStatut.textContent = "salon prêt";
+} else {
+  pointStatut.classList.add("ko");
+  texteStatut.textContent = "configuration Firebase manquante";
+}
+
+/* ---------- Connexion ---------- */
+document.getElementById("btn-entrer").addEventListener("click", tenterConnexion);
+document.getElementById("champ-mdp").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") tenterConnexion();
+});
+
+function tenterConnexion(){
+  const erreur = document.getElementById("msg-erreur");
+  const mdp = document.getElementById("champ-mdp").value;
+
+  if (!pseudoChoisi){
+    erreur.textContent = "Choisis ton pseudo d'abord.";
+    return;
+  }
+  const compte = COMPTES[pseudoChoisi];
+  if (mdp !== compte.motdepasse){
+    erreur.textContent = "Mot de passe incorrect.";
+    return;
+  }
+  if (!firebaseOK){
+    erreur.textContent = "Le salon n'est pas encore configuré (Firebase).";
+    return;
+  }
+
+  utilisateurActuel = pseudoChoisi;
+  sessionStorage.setItem("salon_utilisateur", pseudoChoisi);
+  ouvrirChat();
+}
+
+/* ---------- Reprise de session ---------- */
+window.addEventListener("DOMContentLoaded", () => {
+  const sauvegarde = sessionStorage.getItem("salon_utilisateur");
+  if (sauvegarde && COMPTES[sauvegarde] && firebaseOK){
+    utilisateurActuel = sauvegarde;
+    ouvrirChat();
+  }
+});
+
+/* ---------- Ouverture du salon ---------- */
+function ouvrirChat(){
+  document.getElementById("ecran-login").style.display = "none";
+  document.getElementById("ecran-chat").style.display = "flex";
+
+  const autre = utilisateurActuel === "ghost" ? COMPTES.evil.nomAffiche : COMPTES.ghost.nomAffiche;
+  document.getElementById("champ-message").placeholder = "Écrit à " + autre + "…";
+
+  demarrerEcouteMessages();
+  ambiance.demarrer();
+  document.getElementById("btn-musique").classList.add("actif");
+}
+
+document.getElementById("btn-quitter").addEventListener("click", () => {
+  sessionStorage.removeItem("salon_utilisateur");
+  location.reload();
+});
+
+/* ---------- Messages : envoi ---------- */
+const champMessage = document.getElementById("champ-message");
+const btnEnvoyer = document.getElementById("btn-envoyer");
+
+champMessage.addEventListener("input", () => {
+  champMessage.style.height = "auto";
+  champMessage.style.height = Math.min(champMessage.scrollHeight, 100) + "px";
+});
+champMessage.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey){
+    e.preventDefault();
+    envoyerMessage();
+  }
+});
+btnEnvoyer.addEventListener("click", envoyerMessage);
+
+function envoyerMessage(){
+  const texte = champMessage.value.trim();
+  if (!texte || !firebaseOK) return;
+  const messagesRef = ref(db, "salonGhostEvil/messages");
+  push(messagesRef, {
+    auteur: utilisateurActuel,
+    texte: texte,
+    horodatage: serverTimestamp(),
+  });
+  champMessage.value = "";
+  champMessage.style.height = "auto";
+}
+
+/* ---------- Messages : réception temps réel ---------- */
+function demarrerEcouteMessages(){
+  const zoneMessages = document.getElementById("zone-messages");
+  const messagesRef = query(ref(db, "salonGhostEvil/messages"), limitToLast(200));
+
+  onValue(messagesRef, (snapshot) => {
+    const donnees = snapshot.val();
+    zoneMessages.innerHTML = "";
+
+    if (!donnees){
+      const vide = document.createElement("div");
+      vide.className = "message-vide";
+      vide.textContent = "Le salon est silencieux pour le moment… écris le premier mot.";
+      zoneMessages.appendChild(vide);
+      return;
+    }
+
+    const liste = Object.values(donnees).sort((a,b) => (a.horodatage||0) - (b.horodatage||0));
+
+    liste.forEach((msg) => {
+      const bulle = document.createElement("div");
+      bulle.className = "bulle " + (msg.auteur === utilisateurActuel ? "moi" : "toi");
+
+      const corps = document.createElement("div");
+      corps.textContent = msg.texte; // textContent => pas d'injection HTML possible
+      bulle.appendChild(corps);
+
+      const heure = document.createElement("span");
+      heure.className = "heure";
+      const date = msg.horodatage ? new Date(msg.horodatage) : new Date();
+      heure.textContent = date.toLocaleTimeString("fr-FR", {hour:"2-digit", minute:"2-digit"});
+      bulle.appendChild(heure);
+
+      zoneMessages.appendChild(bulle);
+    });
+
+    zoneMessages.scrollTop = zoneMessages.scrollHeight;
+  });
+}
+
+/* ---------- Musique d'ambiance (composée en direct, aucun fichier audio) ---------- */
+class AmbianceSonore {
+  constructor(){
+    this.ctx = null;
+    this.actif = false;
+    this.minuteur = null;
+    this.busPrincipal = null;
+  }
+
+  creerReverbe(ctx){
+    const dureeImpulsion = 2.5;
+    const taux = ctx.sampleRate;
+    const longueur = taux * dureeImpulsion;
+    const impulsion = ctx.createBuffer(2, longueur, taux);
+    for (let canal = 0; canal < 2; canal++){
+      const donnees = impulsion.getChannelData(canal);
+      for (let i = 0; i < longueur; i++){
+        donnees[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / longueur, 2.5);
+      }
+    }
+    const convolveur = ctx.createConvolver();
+    convolveur.buffer = impulsion;
+    return convolveur;
+  }
+
+  jouerNote(freq, debut, duree, volume){
+    const ctx = this.ctx;
+    const osc = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = "sine";
+    osc2.type = "sine";
+    osc.frequency.value = freq;
+    osc2.frequency.value = freq * 1.003; // léger battement chaleureux
+
+    gain.gain.setValueAtTime(0, debut);
+    gain.gain.linearRampToValueAtTime(volume, debut + duree * 0.35);
+    gain.gain.linearRampToValueAtTime(volume * 0.6, debut + duree * 0.7);
+    gain.gain.linearRampToValueAtTime(0, debut + duree);
+
+    osc.connect(gain);
+    osc2.connect(gain);
+    gain.connect(this.busPrincipal);
+
+    osc.start(debut);
+    osc2.start(debut);
+    osc.stop(debut + duree + 0.1);
+    osc2.stop(debut + duree + 0.1);
+  }
+
+  demarrer(){
+    if (this.actif) return;
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.ctx = ctx;
+    this.actif = true;
+
+    const reverbe = this.creerReverbe(ctx);
+    const volumeGlobal = ctx.createGain();
+    volumeGlobal.gain.value = 0.18;
+
+    this.busPrincipal = ctx.createGain();
+    this.busPrincipal.gain.value = 1;
+    this.busPrincipal.connect(reverbe);
+    reverbe.connect(volumeGlobal);
+    volumeGlobal.connect(ctx.destination);
+    this.busPrincipal.connect(volumeGlobal); // un peu de signal direct aussi
+
+    // Accords doux qui tournent lentement (Am9 - Fmaj9 - Cmaj9 - G)
+    const accords = [
+      [220.00, 261.63, 329.63, 392.00],   // Am9 (A C E G)
+      [174.61, 220.00, 261.63, 329.63],   // Fmaj9 (F A C E)
+      [261.63, 329.63, 392.00, 493.88],   // Cmaj9 (C E G B)
+      [196.00, 246.94, 293.66, 392.00],   // G (G B D G)
+    ];
+    const gammeArpege = [392.00, 440.00, 493.88, 523.25, 587.33, 659.25, 698.46];
+
+    let tempsAccord = ctx.currentTime + 0.3;
+    let indexAccord = 0;
+    const dureeAccord = 6.5;
+
+    const boucleAccords = () => {
+      if (!this.actif) return;
+      const accord = accords[indexAccord % accords.length];
+      accord.forEach((freq, i) => {
+        this.jouerNote(freq, tempsAccord, dureeAccord, 0.05 + (i === 0 ? 0.02 : 0));
+      });
+      indexAccord++;
+      tempsAccord += dureeAccord;
+      this.minuteur = setTimeout(boucleAccords, dureeAccord * 1000 * 0.92);
+    };
+    boucleAccords();
+
+    // Arpège lent, façon boîte à musique, par-dessus les accords
+    const boucleArpege = () => {
+      if (!this.actif) return;
+      if (Math.random() > 0.35){
+        const freq = gammeArpege[Math.floor(Math.random() * gammeArpege.length)];
+        this.jouerNote(freq, ctx.currentTime + 0.05, 2.2, 0.045);
+      }
+      const prochain = 1400 + Math.random() * 1600;
+      this.minuteur2 = setTimeout(boucleArpege, prochain);
+    };
+    setTimeout(boucleArpege, 1800);
+  }
+
+  arreter(){
+    this.actif = false;
+    if (this.minuteur) clearTimeout(this.minuteur);
+    if (this.minuteur2) clearTimeout(this.minuteur2);
+    if (this.ctx){
+      this.ctx.close();
+      this.ctx = null;
+    }
+  }
+}
+
+const ambiance = new AmbianceSonore();
+const btnMusique = document.getElementById("btn-musique");
+btnMusique.addEventListener("click", () => {
+  if (ambiance.actif){
+    ambiance.arreter();
+    btnMusique.classList.remove("actif");
+  } else {
+    ambiance.demarrer();
+    btnMusique.classList.add("actif");
+  }
+});
+
+
+const conteneurPetales = document.getElementById("petales");
+for (let i = 0; i < 14; i++){
+  const p = document.createElement("div");
+  p.className = "petale";
+  p.style.left = Math.random() * 100 + "%";
+  p.style.animationDuration = (10 + Math.random() * 12) + "s";
+  p.style.animationDelay = (Math.random() * 10) + "s";
+  p.style.opacity = 0.3 + Math.random() * 0.4;
+  p.style.transform = `scale(${0.6 + Math.random() * 0.8})`;
+  conteneurPetales.appendChild(p);
+}
+</script>
+</body>
+</html>
